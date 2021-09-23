@@ -11,62 +11,62 @@ private:
     // Call this to increase capacity
     // while preserving the elements already stored
     void alloc_(){
-        //todo
-        data = (int *)realloc(data, sizeof(int) * capacity * 2);
+        this->capacity *= 2;
+        int *tmp = new int[capacity];
+        for (int i = 0; i <= this->current; i++)
+            tmp[i] = this->data[i];
+        delete[] data;
+        this->data = tmp;
     }
 
 public:
     //Ctor
     vector() {
         //todo
-        capacity = 1;
+        capacity = 10;
         current = 0;
-        data = (int *)malloc(sizeof(int) * capacity);
+        data = new int[capacity];
     }
+    
     //Dtor
     ~vector() {
         //todo
-        free(data);
+        delete[] data;
     }
 
     // Current number of elements in the vector
     unsigned size() const {
         //todo
-        return current;
+        return this->current;
     }
 
     // Remove last element
     void pop_back() {
-        current--;
+        this->current--;
     }
-        
 
     // Add an element at the back of the vector
     void push_back(int v) {
         //todo
         if (current >= capacity) {
-            data = (int *)realloc(data, sizeof(int) * capacity * 2);
-            capacity *= 2;
-            if (data) {
-                *(data + current) = v;
-                current++;
-            }
-        } else {
-            *(data + current) = v;
-            current++;
+            alloc_();
         }
+        data[current] = v;
+        current++;
     }
 
     // Read access
     int operator[](int i) const {
         //todo
-        return data[i];
+        return data[i % size()];
     }
 
     // Read-Write access
     int& operator[](int i) {
         //todo
-        return *(this->data + i);
+        if (i < 0)
+            i += this->current;
+        return this->data[i];
     }
 };
 
@@ -106,6 +106,8 @@ bool test_acc_neg()
     vector v;
     for (int i = 0; i < 100; ++i)
         v.push_back(i);
+    std::cout << v[99]<< " should equal " << v[-1] << std::endl;
+    std::cout << v[49]<< " should equal " << v[-51] << std::endl;
     return (v[99] == v[-1]) && (v[49] == v[-51]);
 }
 
